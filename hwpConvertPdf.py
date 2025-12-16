@@ -1,45 +1,33 @@
 import os
-
 import win32com.client as win32
 
-os.chdir('C:\\Python\\convert\\example\\')
-
-for i in os.listdir():
-    os.rename(i, i.replace(' - 복사본 ', ''))
-    hwp = win32.gencache.EnsureDispatch("HWPFrame.HwpObject")
-
-import win32gui
-hwnd = win32gui.FindWindow(None, "빈 문서 1 - 한글")
+hwp = win32.gencache.EnsureDispatch("HWPFrame.HwpObject")
+hwp.SetMessageBoxMode(0) 
+# 파일 경로 모듈 등록 (오픈 시 경고 방지)
 hwp.RegisterModule("FilePathCheckDLL", "FilePathCheckModule")
-BASE_DIR = 'C:\\Python\\convert\\example\\'
-
-print(os.listdir())
+BASE_DIR = 'c:\\Python\\convert\\example\\'
 
 for i in os.listdir():
-    if not i.lower().endswith('.hwp'): # HWP 파일만 처리
+    if not i.lower().endswith('.hwp'):
         continue
         
-    hwp.Open(os.path.join(BASE_DIR, i))
+    hwp_path = os.path.join(BASE_DIR, i)
     pdf_path = os.path.join(BASE_DIR, i.replace('.hwp', '.pdf'))
     
-    # 1. FileSaveAsPdf 액션 기본 설정 불러오기
+    # HWP 파일 열기
+    hwp.Open(hwp_path, "HWP", "forceopen:true")
+    
+    # PDF/A-1b로 저장 (Attributes = 256)
     hwp.HAction.GetDefault("FileSaveAsPdf", hwp.HParameterSet.HFileOpenSave.HSet)
-    
-    # 2. 파일 경로 설정
     hwp.HParameterSet.HFileOpenSave.filename = pdf_path
-    
-    # 3. 포맷 설정 (문자열 "PDF")
     hwp.HParameterSet.HFileOpenSave.Format = "PDF"
-    
-    # 4. PDF/A 속성 설정 (PDF/A-1b를 위한 값 256)
-    # 한글 프로그램의 버전 및 설정에 따라 이 값이 달라질 수 있습니다.
     hwp.HParameterSet.HFileOpenSave.Attributes = 256 # PDF/A-1b
-    
-    # 5. 액션 실행
     hwp.HAction.Execute("FileSaveAsPdf", hwp.HParameterSet.HFileOpenSave.HSet)
     
     print(f"✓ {i} -> PDF/A 변환 완료")
+    
+    # 3. 문서 닫기 (다음 파일을 열기 전에 저장 여부 묻지 않고 닫기)
+    hwp.Close(0) 
 
-hwp.Quit() # 작업 완료 후 한글 프로그램 종료
-
-
+# 모든 작업 완료 후 프로그램 종료
+hwp.Quit()
