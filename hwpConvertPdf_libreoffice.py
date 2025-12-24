@@ -1,6 +1,10 @@
 import os
 import subprocess
-# import extract_text as et
+import extract_text as et
+
+# Linux 환경에서 LibreOffice를 사용하여 HWP 파일을 PDF로 변환하는 함수
+# Rocky Linux 9 기반
+# LivreOffcice Hwp V3.0 전용
 
 def convert_hwp_to_pdf_linux(hwp_path, pdf_path):
     try:
@@ -75,16 +79,16 @@ def main():
         print("변환된 PDF 파일이 없어 추출 작업을 건너뜁니다.")
         return
 
-    # for pdf_path in pdf_files:
-    #     file_name = os.path.basename(pdf_path)
-    #     print(f"\n[추출 파일]: {file_name}")
+    for pdf_path in pdf_files:
+        file_name = os.path.basename(pdf_path)
+        print(f"\n[추출 파일]: {file_name}")
         
-    #     try:
-    #         extractor = et.PDFTextExtractor(file_name, pdf_path)
-    #         extractor.extract_text()
+        try:
+            extractor = et.PDFTextExtractor(file_name, pdf_path)
+            extractor.extract_text()
             
-    #     except Exception as e:
-    #         print(f"❌ 텍스트 추출 중 오류 발생: {file_name} - {str(e)}")
+        except Exception as e:
+            print(f"❌ 텍스트 추출 중 오류 발생: {file_name} - {str(e)}")
 
     print("\n✅ 모든 작업 완료!")
 

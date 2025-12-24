@@ -2,6 +2,8 @@ import os
 import win32com.client as win32
 import extract_text as et
 
+# Winodows 환경에서 HWP 파일을 PDF/A-1b 형식으로 변환하는 스크립트
+
 try:
     hwp = win32.gencache.EnsureDispatch("HWPFrame.HwpObject")
     hwp.SetMessageBoxMode(0x00000400)
